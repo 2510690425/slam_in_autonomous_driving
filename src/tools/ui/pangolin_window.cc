@@ -27,11 +27,13 @@ bool PangolinWindow::Init() {
 
 void PangolinWindow::Quit() {
     if (impl_->render_thread_.joinable()) {
+        LOG(INFO) << "pangolin window is quitting...";
         impl_->exit_flag_.store(true);
         // common::options::lio::flg_exit = true;
         impl_->render_thread_.join();
     }
-    impl_->DeInit();
+    impl_.reset();
+    //impl_->DeInit();
 }
 
 void PangolinWindow::UpdatePointCloudGlobal(const std::map<Vec2i, CloudPtr, less_vec<2>>& cloud) {

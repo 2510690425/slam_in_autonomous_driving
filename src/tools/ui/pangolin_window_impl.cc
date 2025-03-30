@@ -11,6 +11,12 @@ namespace sad::ui {
 
 using UL = std::unique_lock<std::mutex>;
 
+// 在窗口关闭前调用ReleaseBuffer()
+PangolinWindowImpl::~PangolinWindowImpl() {
+    exit_flag_.store(true);
+    ReleaseBuffer();  // 在上下文销毁前释放资源
+}
+
 bool PangolinWindowImpl::Init() {
     // create a window and bind its context to the main thread
     pangolin::CreateWindowAndBind(win_name_, win_width_, win_height_);
@@ -41,6 +47,7 @@ bool PangolinWindowImpl::Init() {
 }
 
 bool PangolinWindowImpl::DeInit() {
+    LOG(INFO) << "pangolin window Impl is deinit.";
     ReleaseBuffer();
     return true;
 }
@@ -306,6 +313,20 @@ void PangolinWindowImpl::AllocateBuffer() {
     gltext_label_global_ = font.Text(global_text);
 }
 
-void PangolinWindowImpl::ReleaseBuffer() {}
+void PangolinWindowImpl::ReleaseBuffer()
+{
+    // Pangolin的GLtext需要显式释放
+    gltext_label_global_ = pangolin::GlText();  // 通过赋值空对象来重置
+
+    
+    //释放其他OpenGL资源
+    //car_.Release();
+    
+    //确保Plotter在窗口关闭前析构
+    plotter_vel_.reset();
+    plotter_vel_baselink_.reset();
+    plotter_bias_acc_.reset();
+    plotter_bias_gyr_.reset();
+}
 
 }  // namespace sad::ui

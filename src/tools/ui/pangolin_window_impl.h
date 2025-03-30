@@ -27,7 +27,7 @@ class PangolinWindowImpl {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 
     PangolinWindowImpl() = default;
-    ~PangolinWindowImpl() = default;
+    ~PangolinWindowImpl();
 
     PangolinWindowImpl(const PangolinWindowImpl &) = delete;
     PangolinWindowImpl &operator=(const PangolinWindowImpl &) = delete;
